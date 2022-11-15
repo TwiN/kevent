@@ -2,9 +2,11 @@
 Very simple library for creating Kubernetes events.
 
 ```go
-kevent.CreateEvent(kubernetesClient, resourceNamespace, resourceKind, resourceName, reason, message, isWarning)
+eventManager := kevent.NewEventManager(kubernetesClient, applicationName)
+eventManager.Create(resourceNamespace, resourceKind, resourceName, reason, message, isWarning)
 ```
 Where:
+- `applicationName` is the name of the application that creates the event.
 - `kubernetesClient` is a Kubernetes client (e.g. `kubernetes.Clientset`). Note that for testing purposes, the actual parameter type is kubernetes.Interface, which `kubernetes.Clientset` implements.
 - `resourceNamespace` is the namespace of the resource that the event is related to.
 - `resourceKind` is the kind of the resource that the event is related to.
@@ -26,6 +28,7 @@ import (
 func main() {
     clientConfig, _ := rest.InClusterConfig()
     kubernetesClient, _ := kubernetes.NewForConfig(clientConfig)
-    kevent.CreateEvent(kubernetesClient, "kube-system", "pod", "nginx", "Restarted", "Application was unstable", true)
+    eventManager := kevent.NewEventManager(kubernetesClient, "your-application-name")
+    eventManager.Create("kube-system", "pod", "nginx", "Deleted", "Application was unstable", true)
 }
 ```

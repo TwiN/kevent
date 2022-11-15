@@ -9,21 +9,32 @@ import (
 	"k8s.io/client-go/tools/record"
 )
 
-var (
-	scheme = runtime.NewScheme()
+type EventManager struct {
+	kubernetesClient kubernetes.Interface
+	component        string
 
-	broadcaster record.EventBroadcaster = nil
-	recorder    record.EventRecorder    = nil
-)
+	broadcaster record.EventBroadcaster
+	recorder    record.EventRecorder
 
-// CreateEvent creates a Kubernetes Event with the given parameters using the given kubernetes Client.
-func CreateEvent(kubernetesClient kubernetes.Interface, resourceNamespace, resourceKind, resourceName, reason, message string, isWarning bool) {
-	if broadcaster == nil {
-		broadcaster = record.NewBroadcaster()
-		broadcaster.StartStructuredLogging(4)
-		broadcaster.StartRecordingToSink(&typedv1core.EventSinkImpl{Interface: kubernetesClient.CoreV1().Events("")})
-		recorder = broadcaster.NewRecorder(scheme, corev1.EventSource{})
+	scheme *runtime.Scheme
+}
+
+// NewEventManager creates a new EventManager with the given parameters.
+func NewEventManager(kubernetesClient kubernetes.Interface, component string) *EventManager {
+	em := &EventManager{
+		kubernetesClient: kubernetesClient,
+		component:        component,
+		scheme:           runtime.NewScheme(),
 	}
+	em.broadcaster = record.NewBroadcaster()
+	em.broadcaster.StartStructuredLogging(4)
+	em.broadcaster.StartRecordingToSink(&typedv1core.EventSinkImpl{Interface: kubernetesClient.CoreV1().Events("")})
+	em.recorder = em.broadcaster.NewRecorder(em.scheme, corev1.EventSource{Component: component})
+	return em
+}
+
+// Create creates a Kubernetes Event with the given parameters.
+func (em *EventManager) Create(resourceNamespace, resourceKind, resourceName, reason, message string, isWarning bool) {
 	var eventType string
 	if isWarning {
 		eventType = corev1.EventTypeWarning
@@ -39,5 +50,5 @@ func CreateEvent(kubernetesClient kubernetes.Interface, resourceNamespace, resou
 			},
 		},
 	}
-	recorder.Event(us, eventType, reason, message)
+	em.recorder.Event(us, eventType, reason, message)
 }
