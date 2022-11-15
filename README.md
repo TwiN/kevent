@@ -15,7 +15,17 @@ Where:
 
 Example:
 ```go
-clientConfig, _ := rest.InClusterConfig()
-kubernetesClient, _ := kubernetes.NewForConfig(clientConfig)
-kevent.CreateEvent(kubernetesClient, "kube-system", "pod", "nginx", "Restarted", "Application was unstable", true)
+package main
+
+import (
+    "github.com/TwiN/kevent"
+    "k8s.io/client-go/kubernetes"
+    "k8s.io/client-go/rest"
+)
+
+func main() {
+    clientConfig, _ := rest.InClusterConfig()
+    kubernetesClient, _ := kubernetes.NewForConfig(clientConfig)
+    kevent.CreateEvent(kubernetesClient, "kube-system", "pod", "nginx", "Restarted", "Application was unstable", true)
+}
 ```
