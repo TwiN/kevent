@@ -1,4 +1,6 @@
 # kevent
+[![Go Reference](https://pkg.go.dev/badge/github.com/TwiN/kevent.svg)](https://pkg.go.dev/github.com/TwiN/kevent)
+
 Very simple library for creating Kubernetes events.
 
 ```go
