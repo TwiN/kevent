@@ -3,8 +3,8 @@ module github.com/TwiN/kevent
 go 1.22.2
 
 require (
-	k8s.io/api v0.30.0
-	k8s.io/apimachinery v0.30.0
+	k8s.io/api v0.30.1
+	k8s.io/apimachinery v0.30.1
 	k8s.io/client-go v0.30.0
 )
 
