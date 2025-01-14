@@ -1,4 +1,5 @@
 # kevent
+![test](https://github.com/TwiN/kevent/actions/workflows/test.yml/badge.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/TwiN/kevent.svg)](https://pkg.go.dev/github.com/TwiN/kevent)
 
 Very simple library for creating Kubernetes events.
